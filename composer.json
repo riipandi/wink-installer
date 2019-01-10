@@ -3,12 +3,10 @@
     "description": "Laravel Wink installer.",
     "keywords": ["laravel", "wink"],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Aris Ripandi",
-            "email": "aris@ripandi.id"
-        }
-    ],
+    "authors": [{
+        "name": "Aris Ripandi",
+        "email": "aris@ripandi.id"
+    }],
     "autoload": {
         "psr-4": {
             "Riipandi\\WinkInstaller\\Console\\": "src/"
