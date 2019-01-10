@@ -50,7 +50,7 @@ class NewCommand extends Command
             $this->verifyApplicationDoesntExist($directory);
         }
 
-        $output->writeln('<info>Crafting application...</info>');
+        $output->writeln('<info>Crafting your blog...</info>');
 
         $version = $this->getVersion($input);
 
@@ -59,10 +59,34 @@ class NewCommand extends Command
              ->prepareWritableDirectories($directory, $output)
              ->cleanUp($zipFile);
 
+        // Setup Wink.
+        (new Filesystem)->remove($directory.DIRECTORY_SEPARATOR.'.env.example');
+        (new Filesystem)->remove($directory.DIRECTORY_SEPARATOR.'config/services.php');
+        copy(
+            __DIR__.'/stubs/services.php',
+            $directory.DIRECTORY_SEPARATOR.'config/services.php'
+        );
+        copy(__DIR__.'/stubs/.env.example', $directory.DIRECTORY_SEPARATOR.'.env.example');
+
+        $oldScript  = '"@php artisan key:generate --ansi"';
+        $newScript  = "\"@php artisan key:generate --ansi\",\n";
+        $newScript .= "\t\t\t\"@php artisan wink:install\"";
+
+        $oldFile = $directory.DIRECTORY_SEPARATOR.'composer.json';
+        $newFile = $directory.DIRECTORY_SEPARATOR.'composer.wink';
+
+        $oldString = file_get_contents($oldFile);
+        $oldString = str_replace($oldScript, $newScript, $oldString);
+        file_put_contents($newFile, $oldString);
+        (new Filesystem)->remove($oldFile);
+        copy($newFile, $oldFile);
+        (new Filesystem)->remove($newFile);
+
         $composer = $this->findComposer();
 
         $commands = [
             $composer.' install --no-scripts',
+            $composer.' require writingink/wink',
             $composer.' run-script post-root-package-install',
             $composer.' run-script post-create-project-cmd',
             $composer.' run-script post-autoload-dump',
@@ -90,7 +114,9 @@ class NewCommand extends Command
             $output->write($line);
         });
 
-        $output->writeln('<comment>Application ready! Build something amazing.</comment>');
+        $output->writeln('<comment>Don\'t forget to configure database connection.</comment>');
+        $output->writeln('<comment>Then run `php artisan wink:migrate` command.</comment>');
+        $output->writeln('<comment>You are ready to build your amazing blog!</comment>');
     }
 
     /**

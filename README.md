@@ -20,6 +20,11 @@ composer global require riipandi/wink-installer
 wink new myblog
 ```
 
+## To be known
+
+Laravel authentication scaffolding are not included, so you have to run
+`php artisan make:auth` or setup your authentication method by yourself.
+
 ## License
 
 Laravel is a trademark of Taylor Otwel, and Wink is trademark of Mohamed Said.
