@@ -20,6 +20,18 @@ composer global require riipandi/wink-installer
 wink new myblog
 ```
 
+Then runs new wink migrations:
+
+```sh
+php artisan wink:migrate
+```
+
+You may also want to run this command to re-publish the assets:
+
+```sh
+php artisan vendor:publish --tag=wink-assets --force
+```
+
 ## To be known
 
 Laravel authentication scaffolding are not included, so you have to run
