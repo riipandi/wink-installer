@@ -23,4 +23,5 @@ wink new myblog
 ## License
 
 Laravel is a trademark of Taylor Otwel, and Wink is trademark of Mohamed Said.
+
 This project is open-sourced software licensed under the [MIT license](./LICENSE.txt).
