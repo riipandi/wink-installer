@@ -50,7 +50,7 @@ class NewCommand extends Command
             $this->verifyApplicationDoesntExist($directory);
         }
 
-        $output->writeln('<info>Crafting your blog...</info>');
+        $output->writeln('<info>Crafting your Wink blog...</info>');
 
         $version = $this->getVersion($input);
 
@@ -59,28 +59,7 @@ class NewCommand extends Command
              ->prepareWritableDirectories($directory, $output)
              ->cleanUp($zipFile);
 
-        // Setup Wink.
-        (new Filesystem)->remove($directory.DIRECTORY_SEPARATOR.'.env.example');
-        (new Filesystem)->remove($directory.DIRECTORY_SEPARATOR.'config/services.php');
-        copy(
-            __DIR__.'/stubs/services.php',
-            $directory.DIRECTORY_SEPARATOR.'config/services.php'
-        );
-        copy(__DIR__.'/stubs/.env.example', $directory.DIRECTORY_SEPARATOR.'.env.example');
-
-        $oldScript  = '"@php artisan key:generate --ansi"';
-        $newScript  = "\"@php artisan key:generate --ansi\",\n";
-        $newScript .= "\t\t\t\"@php artisan wink:install\"";
-
-        $oldFile = $directory.DIRECTORY_SEPARATOR.'composer.json';
-        $newFile = $directory.DIRECTORY_SEPARATOR.'composer.wink';
-
-        $oldString = file_get_contents($oldFile);
-        $oldString = str_replace($oldScript, $newScript, $oldString);
-        file_put_contents($newFile, $oldString);
-        (new Filesystem)->remove($oldFile);
-        copy($newFile, $oldFile);
-        (new Filesystem)->remove($newFile);
+        $this->SetupWink($directory);
 
         $composer = $this->findComposer();
 
@@ -250,5 +229,30 @@ class NewCommand extends Command
         }
 
         return 'composer';
+    }
+
+    protected function setupWink($appDirectory)
+    {
+        (new Filesystem)->remove($appDirectory.DIRECTORY_SEPARATOR.'.env.example');
+        (new Filesystem)->remove($appDirectory.DIRECTORY_SEPARATOR.'config/services.php');
+        copy(
+            __DIR__.'/stubs/services.php',
+            $appDirectory.DIRECTORY_SEPARATOR.'config/services.php'
+        );
+        copy(__DIR__.'/stubs/.env.example', $appDirectory.DIRECTORY_SEPARATOR.'.env.example');
+
+        $oldScript  = '"@php artisan key:generate --ansi"';
+        $newScript  = "\"@php artisan key:generate --ansi\",\n";
+        $newScript .= "\t\t\t\"@php artisan wink:install\"";
+
+        $oldFile = $appDirectory.DIRECTORY_SEPARATOR.'composer.json';
+        $newFile = $appDirectory.DIRECTORY_SEPARATOR.'composer.wink';
+
+        $oldString = file_get_contents($oldFile);
+        $oldString = str_replace($oldScript, $newScript, $oldString);
+        file_put_contents($newFile, $oldString);
+        (new Filesystem)->remove($oldFile);
+        copy($newFile, $oldFile);
+        (new Filesystem)->remove($newFile);
     }
 }
