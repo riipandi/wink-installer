@@ -20,7 +20,7 @@ composer global require riipandi/wink-installer
 wink new myblog
 ```
 
-Then runs new wink migrations:
+Configure your database, then run new wink migrations:
 
 ```sh
 php artisan wink:migrate
